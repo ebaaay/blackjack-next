@@ -1,17 +1,18 @@
-# Blackjack Game - Next.js
+# Blackjack Fichas Virtuales
 
-A simple blackjack game built with Next.js that allows users to bet chips and track their game rounds. It includes a start screen where users can define their initial credit, play multiple rounds, and view their bet history.
+**Blackjack Fichas Virtuales** es una aplicación diseñada para acompañar partidas de blackjack físicas. Utiliza cartas reales mientras que las apuestas se gestionan con fichas virtuales, eliminando la necesidad de fichas físicas.
 
-## Features
+## Objetivo
 
-- Define starting credit on the start screen.
-- Betting system with different chip values.
-- Round counter to track progress.
-- Dynamic updates to bet history and chip count.
-- Mobile-first design with smooth transitions.
+Permitir que los jugadores disfruten de partidas de blackjack tradicionales con cartas físicas, gestionando las apuestas de manera digital a través de fichas virtuales. Ideal para quienes desean combinar la experiencia física con la comodidad de lo digital.
 
-## Installation
+## Funcionalidades
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/ebaaay/blackjack-next.git
+- **Gestión de fichas virtuales**: Lleva un registro de las apuestas sin necesidad de fichas físicas.
+- **Interfaz clara y sencilla**: Control intuitivo para gestionar las apuestas y ver el saldo de cada jugador.
+- **Guardado de sesión**: Si recargas la página accidentalmente, la partida se reanudará desde donde la dejaste.
+
+## Juega ahora
+
+Accede a la aplicación aquí:  
+[Blackjack Fichas Virtuales](https://blackjack-chips-online.vercel.app/)
