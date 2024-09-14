@@ -9,15 +9,20 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 type ChipValue = 50 | 100 | 200 | 500 | 1000 | 2000 | 5000;
 
-export default function BlackjackChips() {
+interface BlackjackChipsProps {
+  initialCredit: number;
+  onRestart: () => void;
+}
+
+export default function BlackjackChips({ initialCredit, onRestart }: BlackjackChipsProps) {
   const [totalChips, setTotalChips] = useState(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('blackjackChips');
-      return saved ? parseInt(saved, 10) : 10000;
+      return saved ? parseInt(saved, 10) : initialCredit;
     }
-    return 10000;
+    return initialCredit;
   });
-  
+
   const [currentBet, setCurrentBet] = useState<Record<ChipValue, number>>({
     50: 0, 100: 0, 200: 0, 500: 0, 1000: 0, 2000: 0, 5000: 0,
   });
@@ -42,7 +47,10 @@ export default function BlackjackChips() {
   };
 
   const handleOutcome = (won: boolean) => {
-    const totalBet = Object.entries(currentBet).reduce((sum, [value, count]) => sum + Number(value) * count, 0);
+    const totalBet = Object.entries(currentBet).reduce(
+      (sum, [value, count]) => sum + Number(value) * count, 
+      0
+    );
     if (won) {
       setTotalChips(prev => prev + totalBet * 2);
     }
@@ -53,10 +61,21 @@ export default function BlackjackChips() {
     setIsBetting(true);
   };
 
-  const totalBet = Object.entries(currentBet).reduce((sum, [value, count]) => sum + Number(value) * count, 0);
+  const totalBet = Object.entries(currentBet).reduce(
+    (sum, [value, count]) => sum + Number(value) * count,
+    0
+  );
 
   return (
-    <Card className="w-full max-w-md mx-auto bg-gray-900 text-gray-100 shadow-xl border-0">
+    <Card className="w-full max-w-md mx-auto bg-gray-900 text-gray-100 shadow-xl border-0 relative">
+      {/* Botón de la X arriba a la izquierda */}
+      <button 
+        onClick={onRestart} 
+        className="absolute top-3 left-3 bg-red-500 hover:bg-red-600 text-white font-bold rounded-full w-8 h-8 flex items-center justify-center"
+      >
+        &times;
+      </button>
+      
       <CardContent className="space-y-6 pt-6">
         <div className="text-center space-y-2">
           <p className="text-2xl font-medium">Fichas: {totalChips}</p>
