@@ -28,7 +28,7 @@ export default function BlackjackChips({ initialCredit, onRestart }: BlackjackCh
   });
   const [isBetting, setIsBetting] = useState(true);
   const [betHistory, setBetHistory] = useState<{ amount: number; won: boolean }[]>([]);
-  const [round, setRound] = useState(1); // Añadimos contador de rondas
+  const [round, setRound] = useState(1);
 
   const chipValues: ChipValue[] = [50, 100, 200, 500, 1000, 2000, 5000];
 
@@ -40,6 +40,13 @@ export default function BlackjackChips({ initialCredit, onRestart }: BlackjackCh
     if (totalChips >= value) {
       setCurrentBet(prev => ({ ...prev, [value]: prev[value] + 1 }));
       setTotalChips(prev => prev - value);
+    }
+  };
+
+  const handleChipRemove = (value: ChipValue) => {
+    if (currentBet[value] > 0) {
+      setCurrentBet(prev => ({ ...prev, [value]: prev[value] - 1 }));
+      setTotalChips(prev => prev + value);
     }
   };
 
@@ -56,7 +63,7 @@ export default function BlackjackChips({ initialCredit, onRestart }: BlackjackCh
       setTotalChips(prev => prev + totalBet * 2);
     }
     setBetHistory(prev => [{ amount: totalBet, won }, ...prev.slice(0, 4)]);
-    setRound(prev => prev + 1); // Incrementamos la ronda
+    setRound(prev => prev + 1);
     setCurrentBet({
       50: 0, 100: 0, 200: 0, 500: 0, 1000: 0, 2000: 0, 5000: 0,
     });
@@ -85,8 +92,12 @@ export default function BlackjackChips({ initialCredit, onRestart }: BlackjackCh
 
       <CardContent className="space-y-6 pt-6">
         <div className="text-center space-y-2">
-          <p className="text-2xl font-medium">Fichas: {totalChips}</p>
-          <p className="text-3xl font-bold">Apuesta: {totalBet}</p>
+          <p className="text-2xl font-medium">
+            Fichas: {new Intl.NumberFormat('de-DE').format(totalChips)} {/* Formato con puntos */}
+          </p>
+          <p className="text-3xl font-bold">
+            Apuesta: {new Intl.NumberFormat('de-DE').format(totalBet)} {/* Formato con puntos */}
+          </p>
         </div>
         <div className="flex flex-wrap justify-center gap-2">
           {Object.entries(currentBet).map(([value, count]) => {
@@ -95,7 +106,7 @@ export default function BlackjackChips({ initialCredit, onRestart }: BlackjackCh
                 <Chip 
                   key={value} 
                   value={Number(value) as ChipValue} 
-                  onClick={() => {}} 
+                  onClick={() => handleChipRemove(Number(value) as ChipValue)} // Al hacer clic, se elimina la ficha
                   count={count}
                 />
               );
@@ -112,9 +123,12 @@ export default function BlackjackChips({ initialCredit, onRestart }: BlackjackCh
                   initial={{ opacity: 0, scale: 0 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0 }}
-                  transition={{ duration: 0.3 }} // Transición al aparecer o desaparecer
+                  transition={{ duration: 0.3 }}
                 >
-                  <Chip value={value} onClick={() => handleChipClick(value)} />
+                  <Chip 
+                    value={value} 
+                    onClick={() => handleChipClick(value)} 
+                  />
                 </motion.div>
               ))}
             </AnimatePresence>
