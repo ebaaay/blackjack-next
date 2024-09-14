@@ -11,27 +11,26 @@ export default function StartScreen({ onStartGame }: { onStartGame: (credit: num
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-  
-    // Si el campo está vacío, muestra '0' pero no lo mantiene una vez que se escribe algo más
+    let value = e.target.value;
     if (value === '') {
-      setCredit('0');
-    } else {
-      setCredit(value.replace(/^0+/, ''));
+      setCredit('0'); // Si el campo está vacío, establece '0'
+    } else if (/^\d*$/.test(value)) {
+      setCredit(value.replace(/^0+/, '')); // Elimina ceros iniciales
     }
   };
-  
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-[#111827] text-white p-8 sm:p-6">
       <h1 className="text-4xl sm:text-5xl font-bold mb-8 sm:mb-10 text-center">Bienvenido al Blackjack</h1>
       <p className="mb-6 text-xl sm:text-2xl text-center">Ingresa el crédito inicial para comenzar el juego:</p>
       <input
-        type="text"
+        type="number" // Solo números
+        inputMode="numeric" // Mejor experiencia móvil
         value={credit}
         onChange={handleInputChange}
         className="w-full max-w-md p-4 text-lg text-white bg-gray-800 border-2 border-[#111827] rounded-lg focus:outline-none focus:ring-4 focus:ring-blue-600 placeholder-gray-400"
         placeholder="Crédito inicial"
+        min="0"
       />
       <button
         onClick={handleStart}
