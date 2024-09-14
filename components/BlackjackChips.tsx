@@ -12,9 +12,20 @@ type ChipValue = 50 | 100 | 200 | 500 | 1000 | 2000 | 5000;
 interface BlackjackChipsProps {
   initialCredit: number;
   onRestart: () => void;
+  betHistory: { amount: number; won: boolean }[]; // Recibe betHistory como prop
+  updateBetHistory: (newHistory: { amount: number; won: boolean }[]) => void; // Función para actualizar el historial
+  round: number; // Recibe el número de ronda
+  updateRound: (newRound: number) => void; // Función para actualizar la ronda
 }
 
-export default function BlackjackChips({ initialCredit, onRestart }: BlackjackChipsProps) {
+export default function BlackjackChips({
+  initialCredit,
+  onRestart,
+  betHistory,
+  updateBetHistory,
+  round,
+  updateRound,
+}: BlackjackChipsProps) {
   const [totalChips, setTotalChips] = useState(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('blackjackChips');
@@ -24,11 +35,15 @@ export default function BlackjackChips({ initialCredit, onRestart }: BlackjackCh
   });
 
   const [currentBet, setCurrentBet] = useState<Record<ChipValue, number>>({
-    50: 0, 100: 0, 200: 0, 500: 0, 1000: 0, 2000: 0, 5000: 0,
+    50: 0,
+    100: 0,
+    200: 0,
+    500: 0,
+    1000: 0,
+    2000: 0,
+    5000: 0,
   });
   const [isBetting, setIsBetting] = useState(true);
-  const [betHistory, setBetHistory] = useState<{ amount: number; won: boolean }[]>([]);
-  const [round, setRound] = useState(1);
 
   const chipValues: ChipValue[] = [50, 100, 200, 500, 1000, 2000, 5000];
 
@@ -38,15 +53,15 @@ export default function BlackjackChips({ initialCredit, onRestart }: BlackjackCh
 
   const handleChipClick = (value: ChipValue) => {
     if (totalChips >= value) {
-      setCurrentBet(prev => ({ ...prev, [value]: prev[value] + 1 }));
-      setTotalChips(prev => prev - value);
+      setCurrentBet((prev) => ({ ...prev, [value]: prev[value] + 1 }));
+      setTotalChips((prev) => prev - value);
     }
   };
 
   const handleChipRemove = (value: ChipValue) => {
     if (currentBet[value] > 0) {
-      setCurrentBet(prev => ({ ...prev, [value]: prev[value] - 1 }));
-      setTotalChips(prev => prev + value);
+      setCurrentBet((prev) => ({ ...prev, [value]: prev[value] - 1 }));
+      setTotalChips((prev) => prev + value);
     }
   };
 
@@ -56,16 +71,23 @@ export default function BlackjackChips({ initialCredit, onRestart }: BlackjackCh
 
   const handleOutcome = (won: boolean) => {
     const totalBet = Object.entries(currentBet).reduce(
-      (sum, [value, count]) => sum + Number(value) * count, 
+      (sum, [value, count]) => sum + Number(value) * count,
       0
     );
     if (won) {
-      setTotalChips(prev => prev + totalBet * 2);
+      setTotalChips((prev) => prev + totalBet * 2);
     }
-    setBetHistory(prev => [{ amount: totalBet, won }, ...prev.slice(0, 4)]);
-    setRound(prev => prev + 1);
+    const newHistory = [{ amount: totalBet, won }, ...betHistory.slice(0, 4)];
+    updateBetHistory(newHistory); // Actualiza el historial de apuestas
+    updateRound(round + 1); // Actualiza el número de ronda
     setCurrentBet({
-      50: 0, 100: 0, 200: 0, 500: 0, 1000: 0, 2000: 0, 5000: 0,
+      50: 0,
+      100: 0,
+      200: 0,
+      500: 0,
+      1000: 0,
+      2000: 0,
+      5000: 0,
     });
     setIsBetting(true);
   };
@@ -78,8 +100,8 @@ export default function BlackjackChips({ initialCredit, onRestart }: BlackjackCh
   return (
     <Card className="w-full max-w-md mx-auto bg-gray-900 text-gray-100 shadow-xl border-0 relative">
       {/* Botón de la X arriba a la izquierda */}
-      <button 
-        onClick={onRestart} 
+      <button
+        onClick={onRestart}
         className="absolute top-3 left-3 bg-red-500 hover:bg-red-600 text-white font-bold rounded-full w-8 h-8 flex items-center justify-center"
       >
         &times;
@@ -103,9 +125,9 @@ export default function BlackjackChips({ initialCredit, onRestart }: BlackjackCh
           {Object.entries(currentBet).map(([value, count]) => {
             if (count > 0) {
               return (
-                <Chip 
-                  key={value} 
-                  value={Number(value) as ChipValue} 
+                <Chip
+                  key={value}
+                  value={Number(value) as ChipValue}
                   onClick={() => handleChipRemove(Number(value) as ChipValue)} // Al hacer clic, se elimina la ficha
                   count={count}
                 />
@@ -117,7 +139,7 @@ export default function BlackjackChips({ initialCredit, onRestart }: BlackjackCh
         {isBetting && (
           <motion.div className="flex flex-wrap justify-center gap-2">
             <AnimatePresence>
-              {chipValues.map(value => (
+              {chipValues.map((value) => (
                 <motion.div
                   key={value}
                   initial={{ opacity: 0, scale: 0 }}
@@ -125,10 +147,7 @@ export default function BlackjackChips({ initialCredit, onRestart }: BlackjackCh
                   exit={{ opacity: 0, scale: 0 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <Chip 
-                    value={value} 
-                    onClick={() => handleChipClick(value)} 
-                  />
+                  <Chip value={value} onClick={() => handleChipClick(value)} />
                 </motion.div>
               ))}
             </AnimatePresence>
@@ -137,19 +156,25 @@ export default function BlackjackChips({ initialCredit, onRestart }: BlackjackCh
       </CardContent>
       <CardFooter className="flex flex-col items-center pt-6 space-y-4">
         {isBetting ? (
-          <Button 
-            onClick={handleConfirmBet} 
-            className="w-full bg-yellow-600 hover:bg-yellow-700 text-white text-lg py-6 transition-all duration-300 transform active:scale-95" 
+          <Button
+            onClick={handleConfirmBet}
+            className="w-full bg-yellow-600 hover:bg-yellow-700 text-white text-lg py-6 transition-all duration-300 transform active:scale-95"
             disabled={totalBet === 0}
           >
             Confirmar Apuesta
           </Button>
         ) : (
           <div className="flex w-full gap-4">
-            <Button onClick={() => handleOutcome(true)} className="flex-1 bg-green-600 hover:bg-green-700 text-white text-lg py-6 transition-all duration-300 transform active:scale-95">
+            <Button
+              onClick={() => handleOutcome(true)}
+              className="flex-1 bg-green-600 hover:bg-green-700 text-white text-lg py-6 transition-all duration-300 transform active:scale-95"
+            >
               Gané
             </Button>
-            <Button onClick={() => handleOutcome(false)} className="flex-1 bg-red-600 hover:bg-red-700 text-white text-lg py-6 transition-all duration-300 transform active:scale-95">
+            <Button
+              onClick={() => handleOutcome(false)}
+              className="flex-1 bg-red-600 hover:bg-red-700 text-white text-lg py-6 transition-all duration-300 transform active:scale-95"
+            >
               Perdí
             </Button>
           </div>
