@@ -11,9 +11,13 @@ type ChipValue = 50 | 100 | 200 | 500 | 1000 | 2000 | 5000;
 
 export default function BlackjackChips() {
   const [totalChips, setTotalChips] = useState(() => {
-    const saved = localStorage.getItem('blackjackChips');
-    return saved ? parseInt(saved, 10) : 10000;
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('blackjackChips');
+      return saved ? parseInt(saved, 10) : 10000;
+    }
+    return 10000;
   });
+  
   const [currentBet, setCurrentBet] = useState<Record<ChipValue, number>>({
     50: 0, 100: 0, 200: 0, 500: 0, 1000: 0, 2000: 0, 5000: 0,
   });
