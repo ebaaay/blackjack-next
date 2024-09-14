@@ -28,6 +28,7 @@ export default function BlackjackChips({ initialCredit, onRestart }: BlackjackCh
   });
   const [isBetting, setIsBetting] = useState(true);
   const [betHistory, setBetHistory] = useState<{ amount: number; won: boolean }[]>([]);
+  const [round, setRound] = useState(1); // Añadimos contador de rondas
 
   const chipValues: ChipValue[] = [50, 100, 200, 500, 1000, 2000, 5000];
 
@@ -55,6 +56,7 @@ export default function BlackjackChips({ initialCredit, onRestart }: BlackjackCh
       setTotalChips(prev => prev + totalBet * 2);
     }
     setBetHistory(prev => [{ amount: totalBet, won }, ...prev.slice(0, 4)]);
+    setRound(prev => prev + 1); // Incrementamos la ronda
     setCurrentBet({
       50: 0, 100: 0, 200: 0, 500: 0, 1000: 0, 2000: 0, 5000: 0,
     });
@@ -75,7 +77,12 @@ export default function BlackjackChips({ initialCredit, onRestart }: BlackjackCh
       >
         &times;
       </button>
-      
+
+      {/* Contador de rondas */}
+      <div className="absolute top-3 right-3 bg-blue-600 text-white text-sm font-bold rounded-full w-8 h-8 flex items-center justify-center">
+        {round}
+      </div>
+
       <CardContent className="space-y-6 pt-6">
         <div className="text-center space-y-2">
           <p className="text-2xl font-medium">Fichas: {totalChips}</p>
@@ -105,6 +112,7 @@ export default function BlackjackChips({ initialCredit, onRestart }: BlackjackCh
                   initial={{ opacity: 0, scale: 0 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0 }}
+                  transition={{ duration: 0.3 }} // Transición al aparecer o desaparecer
                 >
                   <Chip value={value} onClick={() => handleChipClick(value)} />
                 </motion.div>
@@ -117,17 +125,17 @@ export default function BlackjackChips({ initialCredit, onRestart }: BlackjackCh
         {isBetting ? (
           <Button 
             onClick={handleConfirmBet} 
-            className="w-full bg-yellow-600 hover:bg-yellow-700 text-white text-lg py-6" 
+            className="w-full bg-yellow-600 hover:bg-yellow-700 text-white text-lg py-6 transition-all duration-300 transform active:scale-95" 
             disabled={totalBet === 0}
           >
             Confirmar Apuesta
           </Button>
         ) : (
           <div className="flex w-full gap-4">
-            <Button onClick={() => handleOutcome(true)} className="flex-1 bg-green-600 hover:bg-green-700 text-white text-lg py-6">
+            <Button onClick={() => handleOutcome(true)} className="flex-1 bg-green-600 hover:bg-green-700 text-white text-lg py-6 transition-all duration-300 transform active:scale-95">
               Gané
             </Button>
-            <Button onClick={() => handleOutcome(false)} className="flex-1 bg-red-600 hover:bg-red-700 text-white text-lg py-6">
+            <Button onClick={() => handleOutcome(false)} className="flex-1 bg-red-600 hover:bg-red-700 text-white text-lg py-6 transition-all duration-300 transform active:scale-95">
               Perdí
             </Button>
           </div>
