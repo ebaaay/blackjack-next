@@ -11,13 +11,14 @@ export default function StartScreen({ onStartGame }: { onStartGame: (credit: num
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let value = e.target.value;
+    const value = e.target.value; // Cambia "let" por "const"
     if (value === '') {
-      setCredit('0'); // Si el campo está vacío, establece '0'
+      setCredit('0');
     } else if (/^\d*$/.test(value)) {
-      setCredit(value.replace(/^0+/, '')); // Elimina ceros iniciales
+      setCredit(value.replace(/^0+/, ''));
     }
   };
+  
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-[#111827] text-white p-8 sm:p-6">
