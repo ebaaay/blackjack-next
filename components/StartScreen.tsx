@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 export default function StartScreen({ onStartGame }: { onStartGame: (credit: number) => void }) {
-  const [credit, setCredit] = useState<string>('10000');
+  const [credit, setCredit] = useState<string>('10000'); // Valor inicial por defecto de 10000
 
   const handleStart = () => {
     const parsedCredit = parseInt(credit, 10);
@@ -11,16 +11,16 @@ export default function StartScreen({ onStartGame }: { onStartGame: (credit: num
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let value = e.target.value;
-
+    const value = e.target.value;
+  
     // Si el campo está vacío, muestra '0' pero no lo mantiene una vez que se escribe algo más
     if (value === '') {
       setCredit('0');
     } else {
-      // Solo permite números y elimina ceros iniciales
       setCredit(value.replace(/^0+/, ''));
     }
   };
+  
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-[#111827] text-white p-8 sm:p-6">
