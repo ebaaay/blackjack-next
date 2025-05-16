@@ -165,32 +165,33 @@ export default function BlackjackChips({
             Confirmar Apuesta
           </Button>
         ) : (
-                <div className="grid grid-cols-2 gap-3 w-full">
-        <Button
-          onClick={() => handleOutcome(2)} // Ganancia 1:1
-          className="bg-green-600 hover:bg-green-700 text-white text-sm sm:text-base py-4"
-        >
-          Gana Normal (1:1)
-        </Button>
-        <Button
-          onClick={() => handleOutcome(2.5)} // Ganancia 3:2 = apuesta * 2.5 (ganancia 1.5x)
-          className="bg-yellow-500 hover:bg-yellow-600 text-white text-sm sm:text-base py-4"
-        >
-          Blackjack (3:2)
-        </Button>
-        <Button
-          onClick={() => handleOutcome(1)} // Recupera lo apostado
-          className="bg-blue-600 hover:bg-blue-700 text-white text-sm sm:text-base py-4"
-        >
-          Empate (Push)
-        </Button>
-        <Button
-          onClick={() => handleOutcome(0)} // No gana nada
-          className="bg-red-600 hover:bg-red-700 text-white text-sm sm:text-base py-4"
-        >
-          Perdí
-        </Button>
-      </div>
+        <div className="grid grid-cols-2 gap-4 w-full">
+          <Button
+            onClick={() => handleOutcome(2)}
+            className="col-span-2 bg-green-600 hover:bg-green-700 text-white text-lg py-6 transition-all duration-300 transform active:scale-95"
+          >
+            Gané
+          </Button>
+          <Button
+            onClick={() => handleOutcome(2.5)}
+            className="bg-yellow-600 hover:bg-yellow-700 text-white text-base py-5 transition-all duration-300 transform active:scale-95"
+          >
+            Blackjack 3:2
+          </Button>
+          <Button
+            onClick={() => handleOutcome(1)}
+            className="bg-blue-600 hover:bg-blue-700 text-white text-base py-5 transition-all duration-300 transform active:scale-95"
+          >
+            Empate
+          </Button>
+          <Button
+            onClick={() => handleOutcome(0)}
+            className="col-span-2 bg-red-600 hover:bg-red-700 text-white text-base py-4 transition-all duration-300 transform active:scale-95"
+          >
+            Perdí
+          </Button>
+        </div>
+
 
         )}
         <BetHistory betHistory={betHistory} />
