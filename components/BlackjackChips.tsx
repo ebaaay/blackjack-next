@@ -12,8 +12,8 @@ type ChipValue = 50 | 100 | 200 | 500 | 1000 | 2000 | 5000;
 interface BlackjackChipsProps {
   initialCredit: number;
   onRestart: () => void;
-  betHistory: { amount: number; won: boolean }[]; // Recibe betHistory como prop
-  updateBetHistory: (newHistory: { amount: number; won: boolean }[]) => void; // Función para actualizar el historial
+  betHistory: { amount: number; type: "normal" | "blackjack" | "push" | "lose" }[];
+  updateBetHistory: (newHistory: { amount: number; type: "normal" | "blackjack" | "push" | "lose" }[]) => void; // Función para actualizar el historial
   round: number; // Recibe el número de ronda
   updateRound: (newRound: number) => void; // Función para actualizar la ronda
 }
@@ -69,7 +69,7 @@ export default function BlackjackChips({
     setIsBetting(false);
   };
 
-  const handleOutcome = (multiplier: number) => {
+  const handleOutcome = (multiplier: number, type: "normal" | "blackjack" | "push" | "lose") => {
     const totalBet = Object.entries(currentBet).reduce(
       (sum, [value, count]) => sum + Number(value) * count,
       0
@@ -77,7 +77,8 @@ export default function BlackjackChips({
     if (multiplier > 0) {
       setTotalChips((prev) => prev + totalBet * multiplier);
     }
-    const newHistory = [{ amount: totalBet, won: multiplier > 0 }, ...betHistory.slice(0, 4)];
+    const newHistory = [{ amount: totalBet, type }, ...betHistory];
+    
     updateBetHistory(newHistory);
     updateRound(round + 1);
     setCurrentBet({
@@ -167,25 +168,25 @@ export default function BlackjackChips({
         ) : (
         <div className="grid grid-cols-2 gap-4 w-full">
           <Button
-            onClick={() => handleOutcome(2)}
+            onClick={() => handleOutcome(2, "normal")}
             className="col-span-2 bg-green-600 hover:bg-green-700 text-white text-lg py-6 transition-all duration-300 transform active:scale-95"
           >
             Gané
           </Button>
           <Button
-            onClick={() => handleOutcome(2.5)}
+            onClick={() => handleOutcome(2.5, "blackjack")}
             className="bg-yellow-600 hover:bg-yellow-700 text-white text-base py-5 transition-all duration-300 transform active:scale-95"
           >
             Blackjack
           </Button>
           <Button
-            onClick={() => handleOutcome(1)}
+            onClick={() => handleOutcome(1, "push")}
             className="bg-blue-600 hover:bg-blue-700 text-white text-base py-5 transition-all duration-300 transform active:scale-95"
           >
             Empate
           </Button>
           <Button
-            onClick={() => handleOutcome(0)}
+            onClick={() => handleOutcome(0, "lose")}
             className="col-span-2 bg-red-600 hover:bg-red-700 text-white text-base py-4 transition-all duration-300 transform active:scale-95"
           >
             Perdí
