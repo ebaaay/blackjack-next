@@ -6,7 +6,7 @@ import StartScreen from '../components/StartScreen';
 
 export default function Home() {
   const [credit, setCredit] = useState<number | null>(null);
-  const [betHistory, setBetHistory] = useState<{ amount: number; won: boolean }[]>([]);
+  const [betHistory, setBetHistory] = useState<{ amount: number; type: "normal" | "blackjack" | "push" | "lose" }[]>([]);
   const [round, setRound] = useState<number>(1); // Añadimos un estado para la ronda
 
   useEffect(() => {
@@ -20,7 +20,18 @@ export default function Home() {
     }
 
     if (savedHistory) {
-      setBetHistory(JSON.parse(savedHistory)); // Carga el historial guardado
+      // Migrar historial antiguo si es necesario
+      const parsed = JSON.parse(savedHistory);
+      if (parsed.length > 0 && parsed[0].won !== undefined) {
+        // Convertir { amount, won } a { amount, type }
+        const migrated = parsed.map((item: { amount: number; won: boolean }) => ({
+          amount: item.amount,
+          type: item.won ? "normal" : "lose"
+        }));
+        setBetHistory(migrated);
+      } else {
+        setBetHistory(parsed); // Ya tiene el formato correcto
+      }
     }
 
     if (savedRound) {
@@ -32,10 +43,10 @@ export default function Home() {
     setCredit(initialCredit);
     localStorage.setItem('blackjackChips', initialCredit.toString()); // Guarda el crédito en localStorage
     localStorage.setItem('blackjackRound', '1'); // Inicializa la ronda en 1
+  const updateBetHistory = (newHistory: { amount: number; type: "normal" | "blackjack" | "push" | "lose" }[]) => {
+    setBetHistory(newHistory);
+    localStorage.setItem('betHistory', JSON.stringify(newHistory)); // Guarda el historial en localStorage
   };
-
-  const handleRestart = () => {
-    localStorage.removeItem('blackjackChips'); // Elimina el crédito
     localStorage.removeItem('betHistory'); // Elimina el historial
     localStorage.removeItem('blackjackRound'); // Elimina la ronda
     setCredit(null); // Reinicia la pantalla a StartScreen
