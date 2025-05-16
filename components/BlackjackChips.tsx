@@ -69,17 +69,17 @@ export default function BlackjackChips({
     setIsBetting(false);
   };
 
-  const handleOutcome = (won: boolean) => {
+  const handleOutcome = (multiplier: number) => {
     const totalBet = Object.entries(currentBet).reduce(
       (sum, [value, count]) => sum + Number(value) * count,
       0
     );
-    if (won) {
-      setTotalChips((prev) => prev + totalBet * 2);
+    if (multiplier > 0) {
+      setTotalChips((prev) => prev + totalBet * multiplier);
     }
-    const newHistory = [{ amount: totalBet, won }, ...betHistory.slice(0, 4)];
-    updateBetHistory(newHistory); // Actualiza el historial de apuestas
-    updateRound(round + 1); // Actualiza el número de ronda
+    const newHistory = [{ amount: totalBet, won: multiplier > 0 }, ...betHistory.slice(0, 4)];
+    updateBetHistory(newHistory);
+    updateRound(round + 1);
     setCurrentBet({
       50: 0,
       100: 0,
@@ -91,6 +91,7 @@ export default function BlackjackChips({
     });
     setIsBetting(true);
   };
+
 
   const totalBet = Object.entries(currentBet).reduce(
     (sum, [value, count]) => sum + Number(value) * count,
@@ -164,20 +165,33 @@ export default function BlackjackChips({
             Confirmar Apuesta
           </Button>
         ) : (
-          <div className="flex w-full gap-4">
-            <Button
-              onClick={() => handleOutcome(true)}
-              className="flex-1 bg-green-600 hover:bg-green-700 text-white text-lg py-6 transition-all duration-300 transform active:scale-95"
-            >
-              Gané
-            </Button>
-            <Button
-              onClick={() => handleOutcome(false)}
-              className="flex-1 bg-red-600 hover:bg-red-700 text-white text-lg py-6 transition-all duration-300 transform active:scale-95"
-            >
-              Perdí
-            </Button>
-          </div>
+                <div className="grid grid-cols-2 gap-3 w-full">
+        <Button
+          onClick={() => handleOutcome(2)} // Ganancia 1:1
+          className="bg-green-600 hover:bg-green-700 text-white text-sm sm:text-base py-4"
+        >
+          Gana Normal (1:1)
+        </Button>
+        <Button
+          onClick={() => handleOutcome(2.5)} // Ganancia 3:2 = apuesta * 2.5 (ganancia 1.5x)
+          className="bg-yellow-500 hover:bg-yellow-600 text-white text-sm sm:text-base py-4"
+        >
+          Blackjack (3:2)
+        </Button>
+        <Button
+          onClick={() => handleOutcome(1)} // Recupera lo apostado
+          className="bg-blue-600 hover:bg-blue-700 text-white text-sm sm:text-base py-4"
+        >
+          Empate (Push)
+        </Button>
+        <Button
+          onClick={() => handleOutcome(0)} // No gana nada
+          className="bg-red-600 hover:bg-red-700 text-white text-sm sm:text-base py-4"
+        >
+          Perdí
+        </Button>
+      </div>
+
         )}
         <BetHistory betHistory={betHistory} />
       </CardFooter>
