@@ -176,7 +176,7 @@ export default function BlackjackChips({
             onClick={() => handleOutcome(2.5)}
             className="bg-yellow-600 hover:bg-yellow-700 text-white text-base py-5 transition-all duration-300 transform active:scale-95"
           >
-            Blackjack 3:2
+            Blackjack
           </Button>
           <Button
             onClick={() => handleOutcome(1)}
