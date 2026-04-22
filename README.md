@@ -15,4 +15,4 @@ Permitir que los jugadores disfruten de partidas de blackjack tradicionales con 
 ## Juega ahora
 
 Accede a la aplicación aquí:  
-[Blackjack Fichas Virtuales](https://blackjack-chips-online.vercel.app/)
+[Blackjack Fichas Virtuales](https://bj.chhinoo.eu/)
